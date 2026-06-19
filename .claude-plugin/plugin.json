@@ -1,0 +1,8 @@
+{
+  "name": "claude-code-memory",
+  "version": "1.0.0",
+  "description": "Obsidian-based 3-tier memory system — hippocampus for Claude Code. Persistent, searchable, graph-linked.",
+  "author": "shs",
+  "license": "MIT",
+  "hooks": {}
+}

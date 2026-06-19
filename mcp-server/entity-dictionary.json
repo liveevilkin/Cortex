@@ -1,0 +1,38 @@
+{
+  "technologies": [
+    "SQLite", "LanceDB", "Transformers.js", "Docker", "FastAPI", "MQTT",
+    "Protobuf", "HarmonyOS", "CustomTkinter", "Obsidian", "MCP",
+    "Claude Code", "Prompt Caching", "Node.js", "TypeScript",
+    "sql.js", "better-sqlite3", "ONNX", "Ollama", "ChromaDB",
+    "Neo4j", "PostgreSQL", "Redis", "Git", "GitHub Actions",
+    "REST API", "bash", "ShellCheck"
+  ],
+  "concepts": [
+    "艾宾浩斯遗忘曲线", "Ebbinghaus Decay", "Cache Anchor", "缓存锚点",
+    "Knowledge Graph", "知识图谱", "Vector Embedding", "向量嵌入",
+    "Hebbian Learning", "Semantic Search", "语义搜索",
+    "RAG", "Context Injection", "上下文注入", "Chunking Strategy",
+    "Token Budget", "Token 预算", "Memory Strength", "记忆强度",
+    "Conflict Detection", "矛盾检测", "MOC", "Map of Content",
+    "Three-Tier Memory", "三层记忆", "Prompt Cache", "提示缓存",
+    "Frontmatter", "Wikilink", "双向链接"
+  ],
+  "companies": [
+    "开目公司", "武汉军晟科技", "湖北尚诚云教育",
+    "湖北文理学院", "武汉英芝环境监测"
+  ],
+  "skills": [
+    "SQL", "Docker", "Python", "C++", "TypeScript",
+    "FastAPI", "Agent开发", "数据分析", "Shell脚本",
+    "嵌入式开发", "MCP Server开发"
+  ],
+  "projects": [
+    "ClaudeCodeMemory", "数据分析系统",
+    "LVC仿真桥接系统", "雷达声纳模拟器"
+  ],
+  "people": ["邵华胜"],
+  "roles": [
+    "实施顾问", "Agent应用工程师",
+    "研发工程师实习生", "鸿蒙开发工程师实习生"
+  ]
+}

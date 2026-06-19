@@ -1,0 +1,32 @@
+name: Token Budget Check
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 9 * * 1'  # Every Monday at 9am
+
+jobs:
+  token-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check token budget
+        run: |
+          chmod +x src/lib/*.sh
+          bash src/lib/token-budget.sh
+        env:
+          CLAUDE_CODE_MEMORY_VAULT: ./vault-memory
+
+  cache-health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check cache health
+        run: |
+          chmod +x src/lib/*.sh
+          bash src/lib/cache-check.sh
+        env:
+          CLAUDE_CODE_MEMORY_VAULT: ./vault-memory

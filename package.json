@@ -1,0 +1,18 @@
+{
+  "name": "claude-code-memory",
+  "version": "1.0.0",
+  "description": "Obsidian-based 3-tier memory system for Claude Code — persistent, searchable, graph-linked hippocampus",
+  "author": "shs",
+  "license": "MIT",
+  "scripts": {
+    "test": "bash tests/unit/test-hooks.sh && bash tests/integration/test-full-session.sh",
+    "lint": "shellcheck src/hooks/*.sh src/lib/*.sh",
+    "token-budget": "bash src/lib/token-budget.sh",
+    "install": "bash scripts/install.sh"
+  },
+  "keywords": ["claude-code", "memory", "obsidian", "knowledge-graph", "hippocampus"],
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}

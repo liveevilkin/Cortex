@@ -1,0 +1,10 @@
+{
+  "description": "Sample post-tool-use event for testing",
+  "event": "PostToolUse",
+  "tool": "Write",
+  "input": {
+    "file_path": "src/example.py"
+  },
+  "output": "File written successfully",
+  "timestamp": "2026-06-19T12:00:00Z"
+}

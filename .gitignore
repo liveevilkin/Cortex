@@ -1,0 +1,30 @@
+# ── Node.js ──
+node_modules/
+mcp-server/dist/
+mcp-server/data/
+*.log
+npm-debug.log*
+
+# ── Claude Code session data ──
+.claude/.session-buffer.md
+.claude/.compact-buffer.md
+.claude/.mcp-reindex-flag
+.claude/.memory-index-tmp-*.md
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ── IDE ──
+.vscode/
+.idea/
+
+# ── Test artifacts ──
+tests/fixtures/output/
+mcp-server/tests/fixtures/output/
+
+# ── Python (if any) ──
+__pycache__/
+*.pyc

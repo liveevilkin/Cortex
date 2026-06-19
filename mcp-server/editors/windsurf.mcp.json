@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "claude-code-memory": {
+      "command": "node",
+      "args": ["D:/Internship/ClaudeCodeMemory/mcp-server/dist/index.js"],
+      "env": {
+        "CLAUDE_CODE_MEMORY_VAULT": "D:/ObsidianNote/Claude-Code-Memory",
+        "MCP_MEMORY_ADDITIONAL_VAULTS": "D:/ObsidianNote/学习计划"
+      }
+    }
+  }
+}
