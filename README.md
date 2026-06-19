@@ -1,86 +1,116 @@
-# 🧠 ClaudeCodeMemory
+# 🧠 Cortex — Proactive Memory Agent for AI Coding Assistants
 
-> **Obsidian-based 3-tier memory system for Claude Code — persistent, searchable, graph-linked.**
->
-> A "hippocampus" for your AI coding agent: remembers what happened across sessions, surfaces past decisions, and prevents context amnesia.
+> Obsidian-backed knowledge graph with semantic search, entity extraction, and cross-session memory. 11 MCP tools. Works with Claude Code, Cursor, Windsurf, and any MCP-compatible editor.
 
 ---
 
-## What's Inside
+## What It Does
 
 ```
-ClaudeCodeMemory/
-├── src/hooks/          ← Hook scripts (SessionStart, Stop, PreCompact, PostToolUse)
-├── src/lib/            ← Shared libraries (strength, conflict, cache, token utilities)
-├── src/templates/      ← File templates (memory-index, daily, decision)
-├── skills/             ← Reusable skills (memory-review, memory-search)
-├── commands/           ← Slash commands (/memory-status, /memory-force-review)
-├── tests/              ← Unit + integration tests
-├── docs/               ← Architecture & strategy docs
-├── scripts/            ← Installer & migration scripts
-├── .github/workflows/  ← CI/CD (lint, test, token-budget)
-└── .claude-plugin/     ← Claude Code plugin manifest
+You: "How does the memory system handle forgetting?"
+Cortex: 💡 This reminds me of your previous work on:
+       1. decisions/memory-architecture-choice — Ebbinghaus decay with 14-day half-life
+       2. daily/2026-06-19 — You designed the three-tier memory architecture
+       3. moc/system-architecture — Full system diagram
 ```
+
+- **Semantic search** — Find concepts across languages (EN query → CN content)
+- **Knowledge graph** — 928 entities, 106K relationships, auto-extracted from your notes
+- **Proactive context** — `memory_monitor` watches conversation topics, surfaces relevant memories
+- **Gap analysis** — Compare your learning goals against actual knowledge coverage
+- **Cross-session** — Every session loads your memory index + recent daily logs automatically
 
 ## Architecture
 
 ```
-T0 · memory-index.md        ~500 tokens, always loaded
-     ├── Current status (1 sentence)
-     ├── Recent 3-day summaries
-     ├── Top 5 active decisions (by strength)
-     └── Pending TODOs
-
-T1 · daily/                 ~2K tokens/day, last 3 days loaded
-     ├── Daily conversation summaries
-     └── File change logs
-
-T1 · decisions/             On-demand (grep / REST API)
-     └── Important decisions, architecture choices
-
-T2 · Obsidian vault         grep-only, never bulk-loaded
-     └── Full knowledge base with [[wikilinks]]
-```
-
-## Memory Lifecycle
-
-```
-SessionStart → load index + recent 3 daily
-PostToolUse  → track file changes → session buffer
-PreCompact   → save critical state → compact buffer
-Stop         → generate daily → update index → refresh MEMORY.md
-
-Bi-weekly:
-  Maintenance scan → decay scan → conflict detection → cache check
+MCP Client (Claude Code / Cursor / Windsurf)
+       │  stdio JSON-RPC
+       ▼
+┌─────────────────────────────────┐
+│  Cortex MCP Server (TypeScript) │
+│  11 tools + 1 resource          │
+│  ┌───────────────────────────┐  │
+│  │ SQLite (sql.js)           │  │  ← Knowledge graph (8 tables)
+│  │ LanceDB                   │  │  ← Vector embeddings (384-dim)
+│  │ ONNX (all-MiniLM-L6-v2)   │  │  ← Local, zero API cost
+│  └───────────────────────────┘  │
+└──────────────┬──────────────────┘
+               │ reads & indexes
+               ▼
+┌─────────────────────────────────┐
+│  Obsidian Vault (source of truth)│
+│  daily/  decisions/  moc/       │
+│  学习计划/  ...                  │
+└─────────────────────────────────┘
 ```
 
 ## Quick Start
 
 ```bash
-# 1. Clone
-git clone <repo-url> ClaudeCodeMemory
-cd ClaudeCodeMemory
+# 1. Install
+cd Cortex/mcp-server
+npm install --ignore-scripts
+npx tsc
 
-# 2. Install
-bash scripts/install.sh
+# 2. Configure (Claude Code)
+# Copy the MCP config to your global Claude Code settings:
+# ~/.claude/.mcp.json
 
-# 3. Verify
-bash src/lib/cache-check.sh D:/ObsidianNote/Claude-Code-Memory
+# 3. Use
+# Start a Claude Code session. The MCP server starts automatically.
+# Say: "memory_ingest" to index your vault
+# Say: "search for architecture decisions" to find memories
 ```
 
-## Cache Strategy
+## MCP Tools
 
-| Rule | Why |
-|------|-----|
-| memory-index.md — append only | Protects prompt cache prefix |
-| Never edit CLAUDE.md mid-session | 1-character change = full cache miss |
-| Static content first, dynamic last | `cache_control` breakpoint strategy |
-| Daily writes at Stop only | All writes happen after conversation |
+| Tool | Description |
+|------|-------------|
+| `memory_search` | Hybrid keyword + vector semantic search |
+| `memory_ingest` | Scan vault, extract entities, build index |
+| `memory_status` | System health report |
+| `memory_entity_extract` | Extract typed entities from text |
+| `memory_graph_query` | Query the knowledge graph (multi-hop) |
+| `memory_auto_link` | Suggest `[[wikilinks]]` between notes |
+| `memory_monitor` | Process conversation, return proactive context |
+| `memory_conflict_resolve` | Detect contradictions with existing memories |
+| `memory_gap_analysis` | Analyze knowledge gaps vs learning goals |
+| `memory_consolidate` | Apply decay, find archive candidates |
+| `memory_session_end` | Generate daily note (portable Stop hook) |
 
-## Key Design Decisions
+## Editor Support
 
-See [[decisions/memory-architecture-choice]] and [[decisions/obsidian-api-setup]] in the memory vault.
+| Editor | Setup |
+|--------|-------|
+| **Claude Code** | `~/.claude/.mcp.json` (global) or `.mcp.json` (project) |
+| **Cursor** | Copy `editors/cursor.mcp.json` → `.cursor/mcp.json` |
+| **Windsurf** | Copy `editors/windsurf.mcp.json` |
+| **Cline / VS Code** | Copy `editors/cline.mcp.json` |
+
+## Project Structure
+
+```
+Cortex/
+├── mcp-server/               ← TypeScript MCP server (32 source files)
+│   ├── src/
+│   │   ├── tools/            ← 11 MCP tools
+│   │   ├── graph/            ← Knowledge graph + decay + gap detection
+│   │   ├── ingest/           ← Vault scanner, chunker, entity extractor
+│   │   ├── embeddings/       ← ONNX pipeline (all-MiniLM-L6-v2)
+│   │   ├── db/               ← SQLite + LanceDB
+│   │   └── resources/        ← MCP resource endpoints
+│   ├── editors/              ← Config templates for other editors
+│   └── tests/
+├── src/
+│   ├── hooks/                ← Bash hooks (SessionStart, Stop, etc.)
+│   ├── lib/                  ← Bash utilities
+│   └── templates/            ← Vault file templates
+├── skills/                   ← Claude Code skills
+├── commands/                 ← Slash commands
+├── docs/                     ← Architecture docs
+└── tests/                    ← Hook tests
+```
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE)
