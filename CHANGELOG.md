@@ -1,24 +1,43 @@
 # Changelog
 
-## [1.0.0] — 2026-06-19
+All notable changes to Cortex will be documented in this file.
 
-### Added
-- 三层记忆架构：T0 (memory-index) + T1 (daily/decisions/moc) + T2 (vault knowledge)
-- 4 个核心 Hook 脚本：SessionStart, PostToolUse, PreCompact, Stop
-- 记忆强度衰减系统（艾宾浩斯遗忘曲线）
-- 矛盾检测 `[!contradiction]` 机制
-- 缓存锚点保护与验证
-- Token 预算检查工具
-- 双周维护扫描脚本
-- 2 个 Skill：memory-review, memory-search
-- 2 个 Command：/memory-status, /memory-force-review
-- 完整文档套件：README, CONTRIBUTING, MAINTENANCE, architecture
-- CI/CD workflows：lint, test, token-budget
-- 一键安装脚本
-- Claude Code 插件配置
+## [0.1.0] — 2026-06-19
 
-### Design Decisions
-- 工程源码与记忆数据分离（D:\Internship\ClaudeCodeMemory vs D:\ObsidianNote\Claude-Code-Memory）
-- MEMORY.md 作为指针索引，不存储具体知识
-- memory-index.md 只追加不覆盖（保护缓存前缀）
-- Shell 脚本实现（零依赖，跨平台兼容）
+### MCP Server (TypeScript, 32 files)
+
+**11 Tools + 1 Resource**
+- `memory_search` — Hybrid keyword + vector search with dedup and entity-based query expansion
+- `memory_ingest` — Vault scanner with delta detection, chunking, entity extraction, graph building
+- `memory_status` — System health: token budget, strength distribution, cache anchor
+- `memory_entity_extract` — Pattern + dictionary entity extraction (tech, concepts, skills, companies)
+- `memory_graph_query` — Multi-hop knowledge graph traversal
+- `memory_auto_link` — `[[wikilink]]` suggestions via shared entities
+- `memory_monitor` — Proactive conversation context injection
+- `memory_conflict_resolve` — Contradiction detection
+- `memory_gap_analysis` — Knowledge gaps vs learning goals
+- `memory_consolidate` — Decay + archive + relationship pruning
+- `memory_session_end` — Portable daily note generator
+
+**Storage**
+- SQLite (sql.js): 8 tables — entities, relationships, memory_nodes, wikilinks, node_entities, knowledge_gaps, conversation_turns, metadata
+- LanceDB: 384-dim vectors via ONNX (all-MiniLM-L6-v2, hf-mirror.com)
+- 30+ entity dictionary terms
+
+### Bash Hooks (5 scripts)
+- SessionStart, Stop, PostToolUse, PreCompact, maintenance-scan
+- 5 shared libraries: common, strength-calc, conflict-detect, cache-check, token-budget
+- 9/9 unit tests passing
+
+### Infrastructure
+- Global MCP config (`~/.claude/.mcp.json`)
+- Editor configs for Cursor, Windsurf, Cline
+- CODE_OF_CONDUCT, SECURITY, CONTRIBUTING, Issue/PR templates
+- MIT License
+- Conventional commits
+
+### Post-Audit Fixes
+- FK enforcement enabled, transaction wrapping, empty query guard
+- Duplicate hook removal, temp file PID isolation
+- CJK stopwords filter, O(n²) entity cap
+- Token estimation consistency (bytes→chars)
