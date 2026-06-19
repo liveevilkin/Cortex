@@ -39,11 +39,11 @@ export async function initDatabase(dbFilePath?: string): Promise<void> {
     logger.info("Created new database");
   }
 
-  // Enable foreign key enforcement (sql.js defaults to OFF)
+  // Enable foreign key enforcement — must run on every load (sql.js PRAGMAs are session-only)
   db.run("PRAGMA foreign_keys = ON");
-  // Disable journaling for speed (we save manually via export)
   db.run("PRAGMA journal_mode=OFF");
   db.run("PRAGMA synchronous=OFF");
+  logger.info("PRAGMA foreign_keys = ON (enforced on every DB load)");
 
   // Run migrations
   runMigration(getDb());
