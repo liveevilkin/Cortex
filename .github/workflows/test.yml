@@ -60,23 +60,27 @@ jobs:
       - run: npx tsc
       - name: Smoke test (startup + tools)
         run: |
-          timeout 15 node -e "
-          import { spawn } from 'child_process';
+          timeout 15 node --input-type=module -e "
+          import { spawn } from 'node:child_process';
           const p = spawn('node', ['dist/index.js'], { stdio: ['pipe', 'pipe', 'pipe'], env: { ...process.env, MCP_MEMORY_LOG_LEVEL: 'error' } });
+          let out = '';
+          p.stdout.on('data', d => out += d.toString());
+          p.stderr.on('data', () => {});
+          p.on('exit', code => { if (code !== 0) process.exit(1); });
           p.stdin.write(JSON.stringify({jsonrpc:'2.0',id:1,method:'initialize',params:{protocolVersion:'2024-11-05',capabilities:{},clientInfo:{name:'ci',version:'1'}}})+'\n');
-          await new Promise(r=>setTimeout(r,3000));
+          await new Promise(r=>setTimeout(r,5000));
           p.stdin.write(JSON.stringify({jsonrpc:'2.0',id:2,method:'tools/list',params:{}})+'\n');
-          await new Promise(r=>setTimeout(r,2000));
+          await new Promise(r=>setTimeout(r,3000));
+          const hasTools = out.includes('memory_search');
+          if (!hasTools) { console.error('FAIL: tools not found'); process.exit(1); }
+          console.log('PASS: MCP server started and responded');
           p.kill();
-          " 2>&1 || true
+          " 2>&1
 
   # ── Docker build test ──
   docker:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: mcp-server
     steps:
       - uses: actions/checkout@v4
       - name: Build Docker image
-        run: docker build -t cortex:ci .
+        run: docker build -t cortex:ci ./mcp-server
