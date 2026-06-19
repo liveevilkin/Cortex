@@ -231,6 +231,25 @@ export function createServer(): McpServer {
 }
 
 /**
+ * Create server using auto-loader (scans tools/ and resources/ directories).
+ * Use this for production — new tools are automatically discovered.
+ */
+export async function createServerAuto(): Promise<McpServer> {
+  const { autoLoadTools, autoLoadResources } = await import("./registry/auto-loader.js");
+
+  const server = new McpServer({
+    name: "cortex-mcp",
+    version: "0.1.0",
+  });
+
+  const toolCount = await autoLoadTools(server);
+  const resCount = await autoLoadResources(server);
+  logger.info(`Auto-loaded ${toolCount} tools + ${resCount} resources`);
+
+  return server;
+}
+
+/**
  * Initialize all subsystems and start the MCP server.
  */
 export async function startServer(): Promise<void> {

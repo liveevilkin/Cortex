@@ -2,9 +2,9 @@ name: Lint
 
 on:
   push:
-    branches: [main, develop]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
 
 jobs:
   shellcheck:
@@ -14,7 +14,7 @@ jobs:
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
         with:
-          scandir: './src'
+          scandir: ./src
           severity: warning
 
   markdown-lint:
@@ -24,4 +24,19 @@ jobs:
       - name: Markdown Lint
         uses: avto-dev/markdown-lint@v1
         with:
-          args: 'docs/ *.md'
+          args: docs/ *.md
+
+  tsc-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mcp-server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mcp-server/package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npx tsc --noEmit

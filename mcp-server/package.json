@@ -1,37 +1,76 @@
 {
-  "name": "claude-code-memory-mcp",
+  "name": "cortex-mcp",
   "version": "0.1.0",
-  "description": "Proactive memory agent MCP server — semantic search, knowledge graph, entity extraction for Obsidian vaults",
+  "description": "Proactive memory agent for AI coding assistants — Obsidian-backed knowledge graph with semantic search, entity extraction, and cross-session memory",
   "type": "module",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "entity-dictionary.json",
+    "editors/"
+  ],
+  "bin": {
+    "cortex-mcp": "dist/index.js"
+  },
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "vitest run",
+    "test": "vitest run --coverage",
     "test:watch": "vitest",
-    "lint": "eslint src/ --ext .ts",
-    "clean": "rm -rf dist/ data/"
+    "lint": "tsc --noEmit",
+    "clean": "rm -rf dist/ data/",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "memory",
+    "knowledge-graph",
+    "semantic-search",
+    "obsidian",
+    "entity-extraction",
+    "claude-code",
+    "cursor",
+    "ai-agent",
+    "vector-search",
+    "lancedb"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liveevilkin/Cortex.git",
+    "directory": "mcp-server"
+  },
+  "homepage": "https://github.com/liveevilkin/Cortex#readme",
+  "bugs": {
+    "url": "https://github.com/liveevilkin/Cortex/issues"
+  },
+  "author": {
+    "name": "shs",
+    "url": "https://github.com/liveevilkin"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.8.1",
     "@lancedb/lancedb": "^0.15.0",
     "@modelcontextprotocol/sdk": "^1.12.0",
-    "@xenova/transformers": "^2.17.2",
     "js-yaml": "^4.1.0",
     "onnxruntime-node": "^1.26.0",
-    "sharp": "^0.34.5",
     "sql.js": "^1.11.0"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.12",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.10.0",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0",
-    "eslint": "^9.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.7.0",
     "vitest": "^2.1.0"
+  },
+  "optionalDependencies": {
+    "@xenova/transformers": "^2.17.2",
+    "sharp": "^0.34.5"
   }
 }

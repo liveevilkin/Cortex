@@ -42,7 +42,7 @@ export function chunkMarkdown(
 
     if (tokens <= maxTokens) {
       // Section fits in one chunk
-      if (tokens >= minTokens || chunks.length === 0) {
+      if (tokens > 0) {
         chunks.push({
           chunk_index: chunkIndex++,
           chunk_text: sectionText.trim(),

@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  cortex:
+    build: .
+    image: cortex:latest
+    volumes:
+      # Mount your Obsidian vault
+      - ${OBSIDIAN_VAULT:-D:/ObsidianNote/Claude-Code-Memory}:/vault/memory:ro
+      - ${OBSIDIAN_KNOWLEDGE:-D:/ObsidianNote/学习计划}:/vault/knowledge:ro
+      # Persist derived indices
+      - cortex-data:/app/data
+    environment:
+      - CLAUDE_CODE_MEMORY_VAULT=/vault/memory
+      - MCP_MEMORY_ADDITIONAL_VAULTS=/vault/knowledge
+      - MCP_MEMORY_LOG_LEVEL=${MCP_MEMORY_LOG_LEVEL:-warn}
+      - HF_MIRROR=${HF_MIRROR:-https://hf-mirror.com}
+    stdin_open: true
+    # stdio transport — Claude Code connects via stdin/stdout
+
+volumes:
+  cortex-data:
